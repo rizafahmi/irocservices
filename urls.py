@@ -1,17 +1,23 @@
 from django.conf.urls.defaults import patterns, include, url
+from piston.resource import Resource
+
+from irocservices.handlers import CoriHandler, CoriCountHandler
+
+cori_resources = Resource(handler=CoriHandler)
+cori_count_resources = Resource(handler=CoriCountHandler)
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    url(r'^api/', include('irocservices.calc.urls'), name='home'),
-    # url(r'^irocservices/', include('irocservices.foo.urls')),
+    url(r'^api/', include('irocservices.cori.urls'), name='api_home'),
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    # Get Comments
+    url(r'^apis/(?P<id_table>[^/]+)/(?P<id_news>[^/]+)/$', cori_resources, { 'emitter_format': 'xml' }),
+    url(r'^apis/(?P<id_table>[^/]+)/(?P<id_news>[^/]+)/(?P<emitter_format>.+)$', cori_resources),
 
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    # Count Comments
+    url(r'^capis/(?P<id_table>[^/]+)/(?P<id_news>[^/]+)/$', cori_count_resources, { 'emitter_format': 'xml' }),
+    url(r'^capis/(?P<id_table>[^/]+)/(?P<id_news>[^/]+)/(?P<emitter_format>.+)$', cori_count_resources),
 )
